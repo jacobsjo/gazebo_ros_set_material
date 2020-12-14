@@ -1,9 +1,5 @@
 # Gazebo ROS Model Color
-[![Build Status](https://img.shields.io/jenkins/s/https/jenkins.qa.ubuntu.com/view/Precise/view/All%20Precise/job/precise-desktop-amd64_default.svg)](https://www.verlab.dcc.ufmg.br/gazebo_ros_model_color)
-[![Version](https://img.shields.io/badge/version-1.0-brightgreen.svg)](https://www.verlab.dcc.ufmg.br/gazebo_ros_model_color)
-[![License](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
-
-This package contains a gazebo ros plugin which allows the user to modified dynamicly the color of the objects.
+This package contains a gazebo ros plugin which allows the user to modified dynamicly the material of the objects. It is based on the [Gazebo ROS Model Color](https://github.com/verlab/gazebo_ros_model_color) plugin.
 
 ## Installation ##
 > This setup was tested in ROS Kinetic, running on Ubuntu 16.04 LTS.
@@ -13,15 +9,15 @@ This package contains a gazebo ros plugin which allows the user to modified dyna
 
 ```sh
 $ cd ~/catkin_ws/src/
-$ git clone https://github.com/verlab/gazebo_ros_model_color.git
+$ git clone git@github.com:jacobsjo/gazebo_ros_set_material.git
 $ cd ~/catkin_ws/
-$ rosdep install --from-paths src/gazebo_ros_model_color --ignore-src -r -y
+$ rosdep install --from-paths src/gazebo_ros_set_material --ignore-src -r -y
 $ catkin_make
 $ source devel/setup.bash
 ```
 
 
-## Usage ##
+## Usage (Old)##
 This is an example how to use this plugin. Once imported it into a object, ROS should be able to provide a service to change the object color.
 
 ```xml
@@ -78,24 +74,3 @@ attenuation_constant: 0.0
 attenuation_linear: 0.0
 attenuation_quadratic: 0.0"
 ```
-
-
-## References
-- https://bitbucket.org/osrf/gazebo/src/aab36be8994a/plugins/?at=default
-- http://answers.gazebosim.org/question/1377/visuals-material-update-from-modelplugin-in-ros-gazebo/
-- How to create a gazebo ros plugin: http://gazebosim.org/tutorials?tut=ros_plugins
-
-
-## Institution ##
-
-Federal University of Minas Gerais (UFMG)  
-Computer Science Department  
-Belo Horizonte - Minas Gerais -Brazil 
-
-## Laboratory ##
-
-![VeRLab](https://www.dcc.ufmg.br/dcc/sites/default/files/public/verlab-logo.png)
-
-
-**VeRLab:** Laboratory of Computer Vison and Robotics   
-https://www.verlab.dcc.ufmg.br
