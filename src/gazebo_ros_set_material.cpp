@@ -21,22 +21,22 @@
    Author: Paulo Rezeck
    Date: 14 Sept 2018
 */
-#include <gazebo_ros_model_color/gazebo_ros_model_color.h>
+#include <gazebo_ros_set_material/gazebo_ros_set_material.h>
 
 
 namespace gazebo {
     // Register this plugin with the simulator
-    GZ_REGISTER_VISUAL_PLUGIN(ModelVisualPlugin)
+    GZ_REGISTER_VISUAL_PLUGIN(SetMaterialPlugin)
 
-    ModelVisualPlugin::ModelVisualPlugin(){}
+    SetMaterialPlugin::SetMaterialPlugin(){}
 
-    ModelVisualPlugin::~ModelVisualPlugin(){
+    SetMaterialPlugin::~SetMaterialPlugin(){
         this->rosnode_->shutdown();
         this->callback_queue_thread_.join();
         delete this->rosnode_;
     }
 
-    void ModelVisualPlugin::Load(rendering::VisualPtr _visual, sdf::ElementPtr _sdf){
+    void SetMaterialPlugin::Load(rendering::VisualPtr _visual, sdf::ElementPtr _sdf){
         if (!_visual || !_sdf){
              gzerr << "No visual or SDF element specified. Plugin won't load." << std::endl;
             return;
@@ -50,15 +50,14 @@ namespace gazebo {
             this->robot_namespace_ = this->sdf_->Get<std::string>("robotNamespace") + "/";
         }
 
-        this->service_name_ = "/model_color";
+        this->service_name_ = "/set_material";
         if (this->sdf_->HasElement("serviceName")) {
             this->service_name_ = this->sdf_->Get<std::string>("serviceName");
         }
 
-        if (this->sdf_->HasElement("color")){
-            ignition::math::Color default_color = this->sdf_->Get<ignition::math::Color>("color");
-            this->model_->SetAmbient(default_color);
-            this->model_->SetDiffuse(default_color);
+        if (this->sdf_->HasElement("defaultMaterial")){
+            std::string default_material = this->sdf_->Get<std::string>("defaultMaterial");
+            this->model_->SetMaterial(default_material, true);
         }
 
         // Initialize the ROS node for the gazebo client if necessary
@@ -68,33 +67,31 @@ namespace gazebo {
             ros::init(argc, argv, "gazebo_client", ros::init_options::NoSigintHandler);
         }
 
-        std::string gazebo_source = (ros::this_node::getName() == "/gazebo_client") ? "gzclient" : "gzserver";        
+        //std::string gazebo_source = (ros::this_node::getName() == "/gazebo_client") ? "gzclient" : "gzserver";
         //ROS_INFO(gazebo_source.c_str());
 
         this->rosnode_ = new ros::NodeHandle(this->robot_namespace_);
 
         // advertise services on the custom queue
-        ros::AdvertiseServiceOptions aso = ros::AdvertiseServiceOptions::create<gazebo_msgs::SetLightProperties>(
-            this->service_name_, boost::bind(&ModelVisualPlugin::ServiceCallback, this, _1, _2), ros::VoidPtr(), &this->model_queue_);
+        ros::AdvertiseServiceOptions aso = ros::AdvertiseServiceOptions::create<gazebo_ros_set_material::SetMaterial>(
+            this->service_name_, boost::bind(&SetMaterialPlugin::ServiceCallback, this, _1, _2), ros::VoidPtr(), &this->model_queue_);
 
         this->srv_ = rosnode_->advertiseService(aso);
-    
-        this->callback_queue_thread_ = boost::thread(boost::bind(&ModelVisualPlugin::VisualQueueThread, this));
-    
+
+        this->callback_queue_thread_ = boost::thread(boost::bind(&SetMaterialPlugin::VisualQueueThread, this));
+
         //ROS_INFO("\x1b[6;37;42mHello Simulated Colored World!\x1b[0m");
     }
 
      // Callback when using service
-    bool ModelVisualPlugin::ServiceCallback(gazebo_msgs::SetLightProperties::Request &req, gazebo_msgs::SetLightProperties::Response &res){
-        ignition::math::Color c(req.diffuse.r, req.diffuse.g, req.diffuse.b, req.diffuse.a);
-        this->model_->SetAmbient(c);
-        this->model_->SetDiffuse(c);
+    bool SetMaterialPlugin::ServiceCallback(gazebo_ros_set_material::SetMaterial::Request &req, gazebo_ros_set_material::SetMaterial::Response &res){
+        this->model_->SetMaterial(req.material);
         res.success = true;
-        res.status_message = "Changing the color of the model";
-        return true;     
+        res.status_message = "Changed the material successfully";
+        return true;
     }
 
-    void ModelVisualPlugin::VisualQueueThread(){
+    void SetMaterialPlugin::VisualQueueThread(){
         static const double timeout = 0.01;
         while (this->rosnode_->ok()) {
             model_queue_.callAvailable(ros::WallDuration(timeout));

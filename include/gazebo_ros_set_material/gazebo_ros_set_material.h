@@ -22,8 +22,8 @@
    Date: 14 Sept 2018
 */
 
-#ifndef GAZEBO_ROS_MODEL_COLOR_H
-#define GAZEBO_ROS_MODEL_COLOR_H
+#ifndef GAZEBO_ROS_SET_MATERIAL_H
+#define GAZEBO_ROS_SET_MATERIAL_H
 
 // GAZEBO
 #include <gazebo/common/Plugin.hh>
@@ -42,14 +42,15 @@
 #include <gazebo_msgs/SetLightProperties.h>
 #include <ros/callback_queue.h>
 #include <ros/advertise_options.h>
+#include <gazebo_ros_set_material/SetMaterial.h>
 
 namespace gazebo {
-    class ModelVisualPlugin : public VisualPlugin {
+    class SetMaterialPlugin : public VisualPlugin {
         // Constructor
-        public: ModelVisualPlugin();
+        public: SetMaterialPlugin();
 
         // Destructor
-        public: ~ModelVisualPlugin();
+        public: ~SetMaterialPlugin();
 
         // Load the controller
         public: void Load(rendering::VisualPtr _visual, sdf::ElementPtr _sdf);
@@ -69,8 +70,8 @@ namespace gazebo {
         private: std::string robot_namespace_;
 
         // Callback when using service
-        private:  bool ServiceCallback(gazebo_msgs::SetLightProperties::Request &req,
-                                        gazebo_msgs::SetLightProperties::Response &res);
-    };
+        private:  bool ServiceCallback(gazebo_ros_set_material::SetMaterial::Request &req,
+                                       gazebo_ros_set_material::SetMaterial::Response &res);
+     };
 }
 #endif

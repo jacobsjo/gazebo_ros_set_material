@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Gazebo ROS Set Material
+=======
+# Gazebo ROS Model Color
+>>>>>>> 4f031866c1b00a5b667c23b38a7deabe9b5ed414
 This package contains a gazebo ros plugin which allows the user to modified dynamicly the material of the objects. It is based on the [Gazebo ROS Model Color](https://github.com/verlab/gazebo_ros_model_color) plugin.
 
 ## Installation ##
