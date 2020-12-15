@@ -55,10 +55,10 @@ namespace gazebo {
             this->service_name_ = this->sdf_->Get<std::string>("serviceName");
         }
 
-        if (this->sdf_->HasElement("defaultMaterial")){
-            std::string default_material = this->sdf_->Get<std::string>("defaultMaterial");
-            this->model_->SetMaterial(default_material, true);
-        }
+        //if (this->sdf_->HasElement("defaultMaterial")){
+        //    std::string default_material = this->sdf_->Get<std::string>("defaultMaterial");
+        //    this->model_->SetMaterial(default_material, true);
+        //}
 
         // Initialize the ROS node for the gazebo client if necessary
         if (!ros::isInitialized()) {
